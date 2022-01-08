@@ -1,0 +1,12 @@
+polybar
+picom
+rofi
+nm-applet
+pasystray
+xprop
+openrc
+dunst
+alacritty
+pcmanfm
+firefox
+nerd-fonts

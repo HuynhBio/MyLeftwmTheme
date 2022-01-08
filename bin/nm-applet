@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Basic script to kill all old bars and launch new.
+
+# Terminate already running bad instances
+killall -q nm-applet
+
+# Launch the example bar
+nm-applet &
+
