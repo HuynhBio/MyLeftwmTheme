@@ -9,4 +9,5 @@ dunst
 alacritty
 pcmanfm
 firefox
-nerd-fonts
+nerd-font
+scrot
