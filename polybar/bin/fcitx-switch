@@ -1,0 +1,13 @@
+#! /bin/bash
+case "$1" in
+    --toggle)
+        fcitx-remote -t
+        ;;
+    *)
+        if [ "$(fcitx-remote)" = "1" ]; then
+            echo ""
+        else
+            echo ""
+        fi
+        ;;
+esac
