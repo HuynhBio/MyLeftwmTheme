@@ -1,29 +1,59 @@
 #!/usr/bin/env bash
-# Active Colors
 
+# Active Colors
 red='#EE4F84'
 
+#Device connect
 wifi="$(nmcli device | grep connected | awk '$2=="wifi" {print $1}')"
 ethernet="$(nmcli device | grep connected | awk '$2=="ethernet" {print $1}')"
 
+#mynet status
+if [ -z "$wifi" ] && [ -z "$ethernet" ]; then
+    mynet="off"
+elif [ -z "$wifi" ]; then
+    mynet="lan"
+elif [ -z "$ethernet" ]; then
+    mynet="wifi"
+else
+    mynet="both"
+fi
+
+#Command
 case "$1" in
-    --toggle)
-        if [ -z "$wifi" ] && [ -z "$ethernet"]; then
-            nmcli radio all on &
+    --ethernet)
+        if [ "$mynet" = "off" ]; then
+            echo "%{F$red}"
+        elif [ "$mynet" = "lan" ] || [ "$mynet" = "both" ]; then
+            echo ""
         else
-            nmcli radio all off &
+            echo ""
+        fi
+        ;;
+    --wifi)
+        if [ "$mynet" = "off" ]; then
+            echo ""
+        elif [ "$mynet" = "wifi" ] || [ "$mynet" = "both" ]; then
+            echo "直"
+        else
+            echo ""
+        fi
+        ;;
+    -e)
+        if [ "$mynet" = "off" ]; then
+            nmcli radio all on &
+        elif [ "$mynet" = "lan" ] || [ "$mynet" = "both" ]; then
+            nmcli radio wwan off &
+        else
+            nmcli radio wwan on &
+        fi
+        ;;
+    -w)
+        if [ "$mynet" = "wifi" ] || [ "$mynet" = "both" ]; then
+            nmcli radio wifi off &
         fi
         ;;
     *)
-        if [ -z "$wifi" ] && [ -z "$ethernet"]; then
-            echo "%{F$red}"
-        elif [ -z "$ethernet" ]; then
-            echo ""
-        elif [ -z "$wifi" ]; then
-            echo ""
-        else
-            echo ""
-        fi
+        nmcli device &
         ;;
 esac
 

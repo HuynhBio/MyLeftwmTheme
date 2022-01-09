@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# Active Colors
+red='#EE4F84'
+
+wifi="$(nmcli device | grep connected | awk '$2=="wifi" {print $1}')"
+ethernet="$(nmcli device | grep connected | awk '$2=="ethernet" {print $1}')"
+
+case "$1" in
+    --toggle)
+        if [ -z "$ethernet"]; then
+            nmcli radio wwan on &
+            if [ -z "$wifi" ]; then
+                nmcli radio wifi on &
+            fi 
+        else
+            nmcli radio wwan off &
+        fi
+        ;;
+    *)
+        if [ -z "$ethernet"]; then
+            if [ -z "$wifi" ]; then
+                echo "%{F$red}"
+            else
+                echo ""
+            fi
+        else
+            echo ""
+        fi
+        ;;
+esac
+
