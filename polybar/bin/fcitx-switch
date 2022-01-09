@@ -7,7 +7,7 @@ case "$1" in
         if [ "$(fcitx-remote)" = "1" ]; then
             echo ""
         else
-            echo ""
+            echo ""
         fi
         ;;
 esac

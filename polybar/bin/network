@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+wifi="$(nmcli device | grep connected | awk '$2=="wifi" {print $1}')"
+ethernet="$(nmcli device | grep connected | awk '$2=="ethernet" {print $1}')"
+
+case "$1" in
+    --toggle)
+        if [ -z "$wifi" ] && [ -z "$ethernet"]; then
+            nmcli radio all on &
+        else
+            nmcli radio all off &
+        fi
+        ;;
+    *)
+        if [ -z "$wifi" ] && [ -z "$ethernet"]; then
+            echo ""
+        elif [ -z "$ethernet" ]; then
+            echo ""
+        elif [ -z "$wifi" ]; then
+            echo ""
+        else
+            echo ""
+        fi
+        ;;
+esac
