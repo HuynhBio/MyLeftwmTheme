@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+
+#########################Memz################################################
+mem_info=$(</proc/meminfo)
+		mem_info=$(echo $(echo $(mem_info=${mem_info// /}; echo ${mem_info//kB/})))
+		for m in $mem_info; do
+			case ${m//:*} in
+				"MemTotal") usedmem=$((usedmem+=${m//*:})); totalmem=${m//*:} ;;
+				"ShMem") usedmem=$((usedmem+=${m//*:})) ;;
+				"MemFree"|"Buffers"|"Cached"|"SReclaimable") usedmem=$((usedmem-=${m//*:})) ;;
+			esac
+		done
+		usedmem=$((usedmem / 1024))
+		totalmem=$((totalmem / 1024))
+		mem="${usedmem}MB / ${totalmem}MB"
+        permemused=$((usedmem * 100 / totalmem))
+
+#######################CPU############################
+
+PREV_TOTAL=0
+PREV_IDLE=0
+
+cpuFile="/tmp/.cpu"
+
+if [[ -f "${cpuFile}" ]]; then
+  fileCont=$(cat "${cpuFile}")
+  PREV_TOTAL=$(echo "${fileCont}" | head -n 1)
+  PREV_IDLE=$(echo "${fileCont}" | tail -n 1)
+fi
+
+CPU=(`cat /proc/stat | grep '^cpu '`) # Get the total CPU statistics.
+unset CPU[0]                          # Discard the "cpu" prefix.
+IDLE=${CPU[4]}                        # Get the idle CPU time.
+
+# Calculate the total CPU time.
+TOTAL=0
+
+for VALUE in "${CPU[@]:0:4}"; do
+  let "TOTAL=$TOTAL+$VALUE"
+done
+
+if [[ "${PREV_TOTAL}" != "" ]] && [[ "${PREV_IDLE}" != "" ]]; then
+  # Calculate the CPU usage since we last checked.
+  let "DIFF_IDLE=$IDLE-$PREV_IDLE"
+  let "DIFF_TOTAL=$TOTAL-$PREV_TOTAL"
+  let "DIFF_USAGE=(1000*($DIFF_TOTAL-$DIFF_IDLE)/$DIFF_TOTAL+5)/10"
+fi
+cpuused="$DIFF_USAGE"
+# Remember the total and idle CPU times for the next check.
+echo "${TOTAL}" > "${cpuFile}"
+echo "${IDLE}" >> "${cpuFile}"
+
+
+################################swaps###########################
+swaps_size=$(cat /proc/swaps | head -n 2 | tail -n 1 | awk '{ print $3 }')
+swaps_used=$(cat /proc/swaps | head -n 2 | tail -n 1 | awk '{ print $4 }')
+swapsused=$((swaps_used * 100 / swaps_size))
+
+
+green='#53E2AE'
+yellow='#F1FF52'
+red='#EE4F84'
+
+case "$1" in
+    --cpu)
+        var="$cpuused"
+        if [ "$var" -le "60" ]; then
+            echo "%{F$green} $var%"
+        elif [ "$var" -le "80" ]; then
+            echo "%{F$yellow} $var%"
+        else
+            echo "%{F$red} $var%"
+        fi
+        ;;
+    --mem)
+        var="$permemused"
+        if [ "$var" -le "60" ]; then
+            echo "%{F$green} $var%"
+        elif [ "$var" -le "80" ]; then
+            echo "%{F$yellow} $var%"
+        else
+            echo "%{F$red} $var%"
+        fi
+        ;;
+    --swap)
+        var="$swapsused"
+        if [ "$var" -le "60" ]; then
+            echo "%{F$green}易 $var%"
+        elif [ "$var" -le "80" ]; then
+            echo "%{F$yellow}易 $var%"
+        else
+            echo "%{F$red}易 $var%"
+        fi
+        ;;
+    *)
+        echo " $cpuused %"
+        echo " $permemused %"
+        echo "易 $swapsused %"
+        ;;
+esac
+
