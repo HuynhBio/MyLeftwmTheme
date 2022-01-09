@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Active Colors
+
+red='#EE4F84'
+
 wifi="$(nmcli device | grep connected | awk '$2=="wifi" {print $1}')"
 ethernet="$(nmcli device | grep connected | awk '$2=="ethernet" {print $1}')"
 
@@ -12,7 +16,7 @@ case "$1" in
         ;;
     *)
         if [ -z "$wifi" ] && [ -z "$ethernet"]; then
-            echo ""
+            echo "%{F$red}"
         elif [ -z "$ethernet" ]; then
             echo ""
         elif [ -z "$wifi" ]; then
@@ -22,3 +26,4 @@ case "$1" in
         fi
         ;;
 esac
+
