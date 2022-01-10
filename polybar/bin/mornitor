@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 #########################Memz################################################
 mem_info=$(</proc/meminfo)
 		mem_info=$(echo $(echo $(mem_info=${mem_info// /}; echo ${mem_info//kB/})))
@@ -56,40 +57,44 @@ swaps_size=$(cat /proc/swaps | head -n 2 | tail -n 1 | awk '{ print $3 }')
 swaps_used=$(cat /proc/swaps | head -n 2 | tail -n 1 | awk '{ print $4 }')
 swapsused=$((swaps_used * 100 / swaps_size))
 
-
-green='#53E2AE'
+# Color
+green='#A1EFD3'
 yellow='#F1FF52'
 red='#EE4F84'
 
+# Format value
+
+cpuused=$(printf "%02d\n" $cpuused)
+permemused=$(printf "%02d\n" $permemused)
+swapsused=$(printf "%02d\n" $swapsused)
+
+# Command
 case "$1" in
     --cpu)
-        var="$cpuused"
-        if [ "$var" -le "60" ]; then
-            echo "%{F$green} $var%"
-        elif [ "$var" -le "80" ]; then
-            echo "%{F$yellow} $var%"
+        if [ "$cpuused" -le "60" ]; then
+            echo "%{F$green} $cpuused%"
+        elif [ "$cpuused" -le "80" ]; then
+            echo "%{F$yellow} $cpuused%"
         else
-            echo "%{F$red} $var%"
+            echo "%{F$red} $cpuused%"
         fi
         ;;
     --mem)
-        var="$permemused"
-        if [ "$var" -le "60" ]; then
-            echo "%{F$green} $var%"
-        elif [ "$var" -le "80" ]; then
-            echo "%{F$yellow} $var%"
+        if [ "$permemused" -le "60" ]; then
+            echo "%{F$green} $permemused%"
+        elif [ "$permemused" -le "80" ]; then
+            echo "%{F$yellow} $permemused%"
         else
-            echo "%{F$red} $var%"
+            echo "%{F$red} $permemused%"
         fi
         ;;
     --swap)
-        var="$swapsused"
-        if [ "$var" -le "60" ]; then
-            echo "%{F$green}易 $var%"
-        elif [ "$var" -le "80" ]; then
-            echo "%{F$yellow}易 $var%"
+        if [ "$swapsused" -le "60" ]; then
+            echo "%{F$green}易 $swapsused%"
+        elif [ "$swapsused" -le "80" ]; then
+            echo "%{F$yellow}易 $swapsused%"
         else
-            echo "%{F$red}易 $var%"
+            echo "%{F$red}易 $swapsused%"
         fi
         ;;
     *)
