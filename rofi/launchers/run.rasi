@@ -11,14 +11,14 @@ configuration {
 	font:							"Noto Sans Bold 10";
     show-icons:                     true;
 	icon-theme: 					"Papirus";
-    display-drun: 					"";
-    drun-display-format:            "{name}";
+    display-run: 					"";
+    run-display-format:            "{name}";
     disable-history:                false;
 	sidebar-mode: 					false;
 }
 
 * {
-    background:                     #00000000;
+    background:                     #00000080;
     background-alt:              	#00000000;
     background-bar:                 #f2f2f215;
     foreground:                     #f2f2f2EE;
@@ -26,12 +26,12 @@ configuration {
 }
 
 window {
-    transparency:                   "screenshot";
+    transparency:                   "real";
     background-color:               @background;
     text-color:                     @foreground;
 	border:							0px;
 	border-color:					@border;
-    border-radius:                  0px;
+    border-radius:                  12px;
 	width:							40%;
     location:                       center;
     x-offset:                       0;
@@ -71,8 +71,8 @@ inputbar {
 
 listview {
     background-color:               @background-alt;
-    columns:                        5;
-    lines:                          3;
+    columns:                        1;
+    lines:                          10;
     spacing:                        0%;
     cycle:                          false;
     dynamic:                        true;
@@ -92,25 +92,26 @@ mainbox {
 element {
     background-color:               @background-alt;
     text-color:                     @foreground;
-    orientation:                    vertical;
+    orientation:                    horizontal;
+    children:                       [ element-text, element-icon ];
     border-radius:                  0%;
     padding:                        2% 0% 2% 0%;
 }
 
 element-icon {
-    background-color: 				@background;
+    background-color: 				@background-alt;
     text-color:       				inherit;
     horizontal-align:               0.5;
     vertical-align:                 0.5;
-    size:                           64px;
+    size:                           16px;
     border:                         0px;
 }
 
 element-text {
-    background-color: 				@background;
+    background-color: 				@background-alt;
     text-color:       				inherit;
     expand:                         true;
-    horizontal-align:               0.5;
+    horizontal-align:               0;
     vertical-align:                 0.5;
     margin:                         0.5% 0.5% -0.5% 0.5%;
 }

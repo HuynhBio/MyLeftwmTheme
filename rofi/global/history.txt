@@ -1,1 +1,2 @@
-face
+:h or :hidden to show hidden files/dirs
+!.png
