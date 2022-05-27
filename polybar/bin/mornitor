@@ -1,60 +1,23 @@
 #!/usr/bin/env bash
 
 
-#########################Memz################################################
-mem_info=$(</proc/meminfo)
-		mem_info=$(echo $(echo $(mem_info=${mem_info// /}; echo ${mem_info//kB/})))
-		for m in $mem_info; do
-			case ${m//:*} in
-				"MemTotal") usedmem=$((usedmem+=${m//*:})); totalmem=${m//*:} ;;
-				"ShMem") usedmem=$((usedmem+=${m//*:})) ;;
-				"MemFree"|"Buffers"|"Cached"|"SReclaimable") usedmem=$((usedmem-=${m//*:})) ;;
-			esac
-		done
-		usedmem=$((usedmem / 1024))
-		totalmem=$((totalmem / 1024))
-		mem="${usedmem}MB / ${totalmem}MB"
-        permemused=$((usedmem * 100 / totalmem))
+#########################MEM##########################
+mem_size=$(free | grep 'Mem:' | awk '{ print $2 }')
+mem_used=$(free | grep 'Mem:' | awk '{ print $3 }')
+permemused=$((mem_used * 100 / mem_size))
+#########################CPU##########################
 
-#######################CPU############################
-
-PREV_TOTAL=0
-PREV_IDLE=0
-
-cpuFile="/tmp/.cpu"
-
-if [[ -f "${cpuFile}" ]]; then
-  fileCont=$(cat "${cpuFile}")
-  PREV_TOTAL=$(echo "${fileCont}" | head -n 1)
-  PREV_IDLE=$(echo "${fileCont}" | tail -n 1)
+cpu_usr=$(top -bn1 | grep '%Cpu(s):' | awk '{ print $2 }')
+cpu_sys=$(top -bn1 | grep '%Cpu(s):' | awk '{ print $4 }')
+sumcpu=$(echo "$cpu_usr + $cpu_sys" | bc | cut -d "." -f 1 | cut -d "," -f 1)
+if [ "$sumcpu" -ge "100" ]; then
+    cpuused="100"
+else
+    cpuused="$sumcpu"
 fi
-
-CPU=(`cat /proc/stat | grep '^cpu '`) # Get the total CPU statistics.
-unset CPU[0]                          # Discard the "cpu" prefix.
-IDLE=${CPU[4]}                        # Get the idle CPU time.
-
-# Calculate the total CPU time.
-TOTAL=0
-
-for VALUE in "${CPU[@]:0:4}"; do
-  let "TOTAL=$TOTAL+$VALUE"
-done
-
-if [[ "${PREV_TOTAL}" != "" ]] && [[ "${PREV_IDLE}" != "" ]]; then
-  # Calculate the CPU usage since we last checked.
-  let "DIFF_IDLE=$IDLE-$PREV_IDLE"
-  let "DIFF_TOTAL=$TOTAL-$PREV_TOTAL"
-  let "DIFF_USAGE=(1000*($DIFF_TOTAL-$DIFF_IDLE)/$DIFF_TOTAL+5)/10"
-fi
-cpuused="$DIFF_USAGE"
-# Remember the total and idle CPU times for the next check.
-echo "${TOTAL}" > "${cpuFile}"
-echo "${IDLE}" >> "${cpuFile}"
-
-
-################################swaps###########################
-swaps_size=$(cat /proc/swaps | head -n 2 | tail -n 1 | awk '{ print $3 }')
-swaps_used=$(cat /proc/swaps | head -n 2 | tail -n 1 | awk '{ print $4 }')
+#########################SWAP#########################
+swaps_size=$(free | grep 'Swap:' | awk '{ print $2 }')
+swaps_used=$(free | grep 'Swap:' | awk '{ print $3 }')
 swapsused=$((swaps_used * 100 / swaps_size))
 
 # Color

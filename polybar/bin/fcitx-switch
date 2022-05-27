@@ -1,16 +1,23 @@
-#! /bin/bash
-
+#!/bin/bash
+#COLOR
 yellow='#F1FF52'
 
+fcitx="$(qdbus "org.fcitx.Fcitx" "/inputmethod" "GetCurrentIM")"
+default="fcitx-keyboard-us"
+vietnam="unikey"
+#unikey="$(cat ~/.config/fcitx/conf/*unikey* | grep InputMethod= | awk -F= '{print $2}')"
 case "$1" in
     --toggle)
         fcitx-remote -t
         ;;
     *)
-        if [ "$(fcitx-remote)" = "1" ]; then
-            echo ""
+        if [ "$fcitx" = "$default" ]; then
+            echo ""
+        elif [ "$fcitx" = "$vietnam" ]; then
+            #echo "%{F$yellow}$unikey"
+            echo ""
         else
-            echo "%{F$yellow}"
+            echo "$fcitx"
         fi
         ;;
 esac

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+#Colors
+gray='#9c9c9c'
+yellow='#ffff1a'
+red='#ff1a1a'
+green='#1a1aff'
+
+
+caps_lock () {
+    keys=$(xset -q | sed -n 's/^.*Caps Lock:\s*\(\S*\).*$/\1/p')
+    if [ "$keys" = "on" ]; then
+        echo "Caps"
+    else
+        echo "%{F$gray}Caps"
+    fi
+
+}
+
+num_lock () {
+    keys=$(xset -q | sed -n 's/^.*Num Lock:\s*\(\S*\).*$/\1/p')
+    if [ "$keys" = "on" ]; then
+        echo ""
+    else
+        echo ""
+    fi
+
+}
+
+scroll_lock () {
+    keys=$(xset -q | sed -n 's/^.*Scroll Lock:\s*\(\S*\).*$/\1/p')
+    if [ "$keys" = "on" ]; then
+        echo ""
+    else
+        echo ""
+    fi
+
+}
+if [ -z "$1" ]; then
+    echo "Ban chua chon phim muon check"
+else
+    error0=$(type $1 &>/dev/null && echo "1" || echo "0")
+    #echo $error0
+    if [ "$error0" = "1" ]; then
+        $1
+    else
+        echo "Phim ban chon khong ton tai !!!"
+    fi
+fi
