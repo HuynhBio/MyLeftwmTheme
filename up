@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 export SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 export QT_QPA_PLATFORMTHEME="qt5ct"
 autorandr -c
@@ -18,7 +19,7 @@ elif [ -x "$(command -v compton)" ]; then
 fi
 
 # Set the theme.toml config
-echo "LoadTheme $SCRIPTPATH/theme.toml" > "$XDG_RUNTIME_DIR"/leftwm/commands.pipe
+leftwm-command "LoadTheme $SCRIPTPATH/theme.toml"
 
 # Set background
 if [ -x "$(command -v feh)" ]; then
@@ -29,12 +30,8 @@ fi
 eww daemon
 dunst -conf "$SCRIPTPATH"/dunst/dunstrc &
 #blueman-applet &
-xdg-user-dirs-update &
-$HOME/.config/leftwm/themes/current/bin/nm-applet &
-$HOME/.config/leftwm/themes/current/bin/pasystray &
-#$HOME/.config/leftwm/themes/current/bin/session &
-fcitx-autostart &
-#xfce4-power-manager &
+#nm-applet &
+xfce4-session &
 
 #Start Polybar
 export index=0

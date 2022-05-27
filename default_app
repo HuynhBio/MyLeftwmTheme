@@ -9,18 +9,19 @@ then
   source $HOME/.config/leftwm/default_apps.sh;
 else
   export TERM=alacritty
-  export BROWSER=firefox
+  export BROWSER=google-chrome-stable
   export DOC=libreoffice
-  export FILE=pcmanfm
+  export FILE=pcmanm
   export PLAYER=vlc
-  export GAME=
+  export GAME=steam
   export PHOTO=gimp
   export SANDBOX=
-  export DEV="alacritty -e vim";
+  export DEV=vscodium
+  #export DEV="alacritty -e vim";
 fi
 
 #Lookup Focused tag
-TAG=$(leftwm-state -q -w 0 -t "$HOME"/.config/leftwm/themes/current/liquid/name.liquid | xargs expr 1 +)
+TAG=$(sleep 0.1 && leftwm-state -q -w 0 -t "$HOME"/.config/leftwm/themes/current/liquid/name.liquid | xargs expr 1 +)
 
 #Executes application based on number of focused tag
 case "$TAG" in 
